@@ -169,7 +169,9 @@ dmypy.json
 
 # Generated files
 .idea/**/contentModel.xml
-
+.idea
+.idea/
+.idea*
 # Sensitive or high-churn files
 .idea/**/dataSources/
 .idea/**/dataSources.ids
