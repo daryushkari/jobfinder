@@ -29,4 +29,15 @@ def corporate(request):
 
 
 def applicant(request):
-    return HttpResponse("applicant")
+    if request.method == "POST":
+
+        form = forms.ApplicantSignIn(request.POST)
+
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            email = form.cleaned_data['email']
+            return HttpResponse(str(email)+str(first_name))
+    else:
+        form = forms.ApplicantSignIn(request.POST)
+        print("get request")
+    return render(request, 'front/corporate_templates/corporate_sign_in.html', {'form': form})
