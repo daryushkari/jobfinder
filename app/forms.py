@@ -8,3 +8,13 @@ class ApplicantSignIn(forms.Form):
     email = forms.EmailField(label='email')
     password = forms.CharField(label='password', widget=forms.PasswordInput())
     confirm_password = forms.CharField(label='confirm password', widget=forms.PasswordInput())
+    image = forms.FileField(label='your Image', required=False)
+
+
+class CorporateSignIn(forms.Form):
+    co_name = forms.CharField(label='user name', max_length=100)
+    corporate_name = forms.CharField(label="corporate name", max_length=100)
+    email = forms.EmailField(label="your email", max_length=100)
+    description = forms.CharField(widget=forms.Textarea)
+
+

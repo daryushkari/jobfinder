@@ -20,7 +20,9 @@
 
     <form action="/applicant/" method="post">
     {% csrf_token %}
-    {{ form }}
+    {% for field in form %}
+    <p>{{ field.label_tag }} {{ field }}</p>
+    {% endfor %}
     <input type="submit" value="Submit">
     </form>
 
@@ -28,3 +30,8 @@
 
 </body>
 </html>
+<style type="text/css">
+label{
+    margin-right: 5em; /* or larger if you need */
+}
+</style>

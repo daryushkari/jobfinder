@@ -13,14 +13,16 @@
 
 <div class="container">
     <h1>Welcome to JobFinder!!</h1>
-    <a href="/applicant/sign_in">have an account?sign in</a>
+    <a href="/corporate/sign_in">have an account?sign in</a>
     <br>
     <p>sign up</p>
     <br>
 
     <form action="/corporate/" method="post">
     {% csrf_token %}
-    {{ form }}
+    {% for field in form %}
+    <p>{{ field.label_tag }} {{ field }}</p>
+    {% endfor %}
     <input type="submit" value="Submit">
     </form>
 
@@ -28,3 +30,8 @@
 
 </body>
 </html>
+<style type="text/css">
+label{
+    margin-right: 5em; /* or larger if you need */
+}
+</style>

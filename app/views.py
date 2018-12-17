@@ -40,4 +40,4 @@ def applicant(request):
     else:
         form = forms.ApplicantSignIn(request.POST)
         print("get request")
-    return render(request, 'front/corporate_templates/corporate_sign_in.html', {'form': form})
+    return render(request, 'front/applicant_templates/applicant_sign_in.html', {'form': form})
