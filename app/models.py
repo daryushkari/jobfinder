@@ -1,6 +1,11 @@
 from django.db import models
+from pymongo import MongoClient
+import bcrypt
+import random
+import os
 
-# Create your models here.
+client = MongoClient('localhost', 27017)
+db = client.jobfinderdb
 
 
 class Applicant(models.Model):
@@ -51,19 +56,6 @@ class Applicant(models.Model):
     work_experience3_end_date = models.DateField()
     work_experience3_description = models.TextField()
     # work experience 4
-    work_experience4_job_title = models.CharField(max_length=50)
-    work_experience4_corporate_name = models.CharField(max_length=50)
-    work_experience4_start_date = models.DateField()
-    work_experience4_end_date = models.DateField()
-    work_experience4_description = models.TextField()
-    # work experience 5
-    work_experience5_job_title = models.CharField(max_length=50)
-    work_experience5_corporate_name = models.CharField(max_length=50)
-    work_experience5_start_date = models.DateField()
-    work_experience5_end_date = models.DateField()
-    work_experience5_description = models.TextField()
-    more_work_experiences = models.TextField()
-    # last educational certificate
     degree = models.CharField(max_length=30)
     field_of_study = models.CharField(max_length=30)
     start_time = models.DateField()
@@ -108,3 +100,140 @@ class Rate(models.Model):
     corporate_id = models.ForeignKey(Corporate, on_delete=models.CASCADE)
     user_name = models.ForeignKey(Applicant, on_delete=models.CASCADE)
     rate = models.IntegerField()
+
+# example mongodb database
+
+# Todo: should be deleted just shows how database works
+
+
+# applicant = {
+#     'user_name': '',
+#     'password_hash': '',
+#     'last_name': '',
+#     'first_name': '',
+#     'email': '',
+#     'is_valid': '',
+#     'validation_code': '',
+#     'private': '',
+#     'image': '',
+#     'resume': {
+#         'job_title': '',
+#         'employment_status': '',
+#         'last_corporate': '',
+#         'degree': '',
+#         'email_address': '',
+#         'cellphone_number': '',
+#         'birth_date': '',
+#         'home_address': '',
+#         'sex': '',
+#         'about_me': '',
+#         'professional_skills': [],
+#         'links': '',
+#         'work_experiences': [{'job_title': '',
+#                               'corporate_name': '',
+#                               'start_date': '',
+#                               'end_time': '',
+#                               'corporate_site': '',
+#                               'description': '', }],
+#         'field_of_study': '',
+#         'study_start_time': '',
+#         'study_end_time': '',
+#         'education_institution_name': '',
+#         'degree_description': '',
+#         'languages': [{'language_name': '', 'level': ''}],
+#         'job_preferences': {'work_locations': [],
+#                             'work_fields': [],
+#                             'level': '',
+#                             'excepted_salary': '',
+#                             'Job Benefits': [],
+#                             }
+#     },
+# }
+# corporate = {
+#     'co_user_name': '',
+#     'password_hash': '',
+#     'name': '',
+#     'email': '',
+#     'rate': '',
+#     'user_rates': [{'user_name': '', 'user_rate': 0}],
+#     'is_valid': '',
+#     'validation_code': '',
+#     'description': '',
+#     'announcements': [],
+#}
+#
+# announcement = {
+#     '_id': '',
+#     'corporate_name': '',
+#     'corporate_link': '',
+#     'issue': '',
+#     'field': '',
+#     'salary': '',
+#     'start_time': '',
+#     'end_time': '',
+#     'sent_resumes': [],
+#     'description': '',
+# }
+
+
+def applicant_sign_up(first_name, last_name, user_name, password, email, image):
+
+    if db.applicant.find_one({'user_name': user_name}):
+        return False, "user name already exist"
+
+    allowed_list = ['png', 'jpg', 'jpeg']
+    if image.name.split('.')[-1] not in allowed_list:
+        return False, "file format not allowed"
+
+    validation_code = random.randint(10000, 99999)
+    random_file_name = str(random.randint(100000000000000, 999999999999999))
+    random_file_name += image.name.split('.')[-1]
+    file_name = 'templates/applicants_image/' + random_file_name
+    image.save(file_name)
+
+    new_applicant = {
+        'user_name': user_name,
+        'password_hash': bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()),
+        'last_name': last_name,
+        'first_name': first_name,
+        'email': email,
+        'is_valid': False,
+        'validation_code': validation_code,
+        'private': '',
+        'image': random_file_name,
+        'resume': {
+            'job_title': '',
+            'employment_status': '',
+            'last_corporate': '',
+            'degree': '',
+            'email_address': '',
+            'cellphone_number': '',
+            'birth_date': '',
+            'home_address': '',
+            'sex': '',
+            'about_me': '',
+            'professional_skills': [],
+            'links': '',
+            'work_experiences': [{'job_title': '',
+                                  'corporate_name': '',
+                                  'start_date': '',
+                                  'end_time': '',
+                                  'corporate_site': '',
+                                  'description': '', }],
+            'field_of_study': '',
+            'study_start_time': '',
+            'study_end_time': '',
+            'education_institution_name': '',
+            'degree_description': '',
+            'languages': [{'language_name': '', 'level': ''}],
+            'job_preferences': {'work_locations': [],
+                                'work_fields': [],
+                                'level': '',
+                                'excepted_salary': '',
+                                'Job Benefits': [],
+                                }
+        },
+    }
+
+    db.applicant.insert(new_applicant)
+    return True, "user created successfully"
