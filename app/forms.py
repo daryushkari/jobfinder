@@ -8,7 +8,6 @@ class ApplicantSignIn(forms.Form):
     email = forms.EmailField(label='email')
     password = forms.CharField(label='password', widget=forms.PasswordInput())
     confirm_password = forms.CharField(label='confirm password', widget=forms.PasswordInput())
-    image = forms.FileField(label='your Image', required=False)
 
 
 class CorporateSignIn(forms.Form):
@@ -18,6 +17,15 @@ class CorporateSignIn(forms.Form):
     description = forms.CharField(widget=forms.Textarea)
     password = forms.CharField(label='password', widget=forms.PasswordInput())
     confirm_password = forms.CharField(label='confirm password', widget=forms.PasswordInput())
-    image = forms.FileField(label='your Image', required=False)
+
+
+class ApplicantLogin(forms.Form):
+    username = forms.CharField(label='username', max_length=100)
+    password = forms.CharField(label='password', widget=forms.PasswordInput())
+
+
+class CorporateLogin(forms.Form):
+    co_user_name = forms.CharField(label='user name', max_length=100)
+    password = forms.CharField(label='password', widget=forms.PasswordInput())
 
 

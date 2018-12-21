@@ -114,6 +114,7 @@ class Rate(models.Model):
 #     'email': '',
 #     'is_valid': '',
 #     'validation_code': '',
+#     'token': '',
 #     'private': '',
 #     'image': '',
 #     'resume': {
@@ -155,12 +156,13 @@ class Rate(models.Model):
 #     'name': '',
 #     'email': '',
 #     'rate': '',
+#     'token': '',
 #     'user_rates': [{'user_name': '', 'user_rate': 0}],
 #     'is_valid': '',
 #     'validation_code': '',
 #     'description': '',
 #     'announcements': [],
-#}
+# }
 #
 # announcement = {
 #     '_id': '',
@@ -175,32 +177,26 @@ class Rate(models.Model):
 #     'description': '',
 # }
 
+# add applicant user to database
 
-def applicant_sign_up(first_name, last_name, user_name, password, email, image):
+def applicant_sign_up(first_name, last_name, user_name, password, email):
 
     if db.applicant.find_one({'user_name': user_name}):
         return False, "user name already exist"
 
-    allowed_list = ['png', 'jpg', 'jpeg']
-    if image.name.split('.')[-1] not in allowed_list:
-        return False, "file format not allowed"
-
     validation_code = random.randint(10000, 99999)
-    random_file_name = str(random.randint(100000000000000, 999999999999999))
-    random_file_name += image.name.split('.')[-1]
-    file_name = 'templates/applicants_image/' + random_file_name
-    image.save(file_name)
 
     new_applicant = {
         'user_name': user_name,
-        'password_hash': bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()),
+        'password_hash': str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())),
         'last_name': last_name,
         'first_name': first_name,
         'email': email,
         'is_valid': False,
         'validation_code': validation_code,
+        'token': '',
         'private': '',
-        'image': random_file_name,
+        'image': '',
         'resume': {
             'job_title': '',
             'employment_status': '',
@@ -237,3 +233,29 @@ def applicant_sign_up(first_name, last_name, user_name, password, email, image):
 
     db.applicant.insert(new_applicant)
     return True, "user created successfully"
+
+# add corporate user to database
+
+
+def corporate_sign_up(co_user_name, name, email, description, password):
+
+    if db.corporate.find_one({'co_user_name': co_user_name}):
+        return False, "user name already exist"
+
+    verification_code = random.randint(10000, 99999)
+
+    new_corporate = {
+        'co_user_name': co_user_name,
+        'password_hash': str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())),
+        'name': name,
+        'email': email,
+        'rate': '',
+        'token': '',
+        'user_rates': [],
+        'is_valid': False,
+        'validation_code': verification_code,
+        'description': description,
+        'announcements': [],
+    }
+    db.corporate.insert(new_corporate)
+    return True, "corporate created successfully"

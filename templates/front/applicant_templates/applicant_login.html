@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>JobFinder</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome to JobFinder!!</h1>
+    <a href="/applicant/forgot_password">forgot password</a>
+    <br>
+    <p>log in</p>
+    <br>
+
+    <form action="/applicant/login" method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+    <p>{{ field.label_tag }} {{ field }}</p>
+    {% endfor %}
+    <input type="submit" value="Submit">
+    </form>
+
+</div>
+
+</body>
+</html>
+<style type="text/css">
+label{
+    margin-right: 5em; /* or larger if you need */
+}
+</style>
