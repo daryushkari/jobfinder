@@ -29,3 +29,11 @@ class CorporateLogin(forms.Form):
     password = forms.CharField(label='password', widget=forms.PasswordInput())
 
 
+class CreateAnnouncement(forms.Form):
+    corporate_name = forms.CharField(label="corporate name", max_length=100)
+    corporate_link = forms.CharField(label="your website")
+    job_issue = forms.CharField(label="job issue", max_length=100)
+    job_fields = forms.CharField(label="job fields separate fields by #")
+    job_salary = forms.IntegerField(label="job salary")
+    end_time = forms.IntegerField(label="end time")
+    description = forms.TimeField()

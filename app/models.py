@@ -169,7 +169,7 @@ class Rate(models.Model):
 #     'corporate_name': '',
 #     'corporate_link': '',
 #     'issue': '',
-#     'field': '',
+#     'fields': '',
 #     'salary': '',
 #     'start_time': '',
 #     'end_time': '',
