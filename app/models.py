@@ -1,6 +1,6 @@
 from django.db import models
 from pymongo import MongoClient
-import bcrypt
+import hashlib
 import random
 import os
 
@@ -179,23 +179,21 @@ class Rate(models.Model):
 
 # add applicant user to database
 
-def applicant_sign_up(first_name, last_name, user_name, password, email):
+def applicant_sign_up(first_name, last_name, user_name, password, email, token, validation_code):
 
     if db.applicant.find_one({'user_name': user_name}):
         return False, "user name already exist"
 
-    validation_code = random.randint(10000, 99999)
-
     new_applicant = {
         'user_name': user_name,
-        'password_hash': str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())),
+        'password_hash': str(hashlib.sha512(password.encode('utf-8')).hexdigest()),
         'last_name': last_name,
         'first_name': first_name,
         'email': email,
         'is_valid': False,
         'validation_code': validation_code,
-        'token': '',
-        'private': '',
+        'token': token,
+        'private': False,
         'image': '',
         'resume': {
             'job_title': '',
@@ -237,23 +235,21 @@ def applicant_sign_up(first_name, last_name, user_name, password, email):
 # add corporate user to database
 
 
-def corporate_sign_up(co_user_name, name, email, description, password):
+def corporate_sign_up(co_user_name, name, email, description, password, token, validation_code):
 
     if db.corporate.find_one({'co_user_name': co_user_name}):
         return False, "user name already exist"
 
-    verification_code = random.randint(10000, 99999)
-
     new_corporate = {
         'co_user_name': co_user_name,
-        'password_hash': str(bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())),
+        'password_hash': str(hashlib.sha512(password.encode('utf-8')).hexdigest()),
         'name': name,
         'email': email,
-        'rate': '',
-        'token': '',
+        'rate': 2.5,
+        'token': token,
         'user_rates': [],
         'is_valid': False,
-        'validation_code': verification_code,
+        'validation_code': validation_code,
         'description': description,
         'announcements': [],
     }

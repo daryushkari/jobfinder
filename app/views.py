@@ -1,19 +1,23 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Applicant, Corporate
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 import templates.front
 from . import forms
 from .models import db
+from .utilities.create_validation_code import send_validation_code
 from app import models
+import secrets
 # Create your views here.
+from .model_functions.applicant_login import send_token
+
 
 # home page
 
 
 def hello(request):
-    return render(request, 'front/index.html')
+    return render(request, 'main/index.html')
 
 # applicant sign up
 
@@ -30,8 +34,13 @@ def applicant(request):
             confirm_password = form.cleaned_data['confirm_password']
             if confirm_password != password:
                 pass
-            x, y = models.applicant_sign_up(first_name, last_name, user_name, password, email)
-            return HttpResponse(y)
+            validation_code = send_validation_code(email)
+            token = str(secrets.token_hex())
+            x, y = models.applicant_sign_up(first_name, last_name, user_name, password, email, token, validation_code)
+            if x:
+                return HttpResponseRedirect('/applicant/login')
+            else:
+                return HttpResponse(y)
     else:
         form = forms.ApplicantSignIn(request.POST)
 
@@ -39,8 +48,20 @@ def applicant(request):
 
 
 def applicant_login(request):
-    pass
-
+    if request.method == "POST":
+        form = forms.ApplicantLogin(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            x, token = send_token(username, password)
+            if x:
+                token = '/applicant/users/'+token
+                return HttpResponse("Welcome")
+            elif token == "user not valid":
+                return HttpResponse("user not valid")
+            return HttpResponse("username or password is wrong")
+    form = forms.ApplicantLogin(request.POST)
+    return render(request, 'front/applicant_templates/applicant_login.html', {'form': form})
 
 
 # corporate sign up
@@ -50,10 +71,18 @@ def corporate(request):
     if request.method == "POST":
         form = forms.CorporateSignIn(request.POST)
         if form.is_valid():
-            first_name = form.cleaned_data['co_user_name']
+            co_user_name = form.cleaned_data['co_user_name']
+            name = form.cleaned_data['name']
             email = form.cleaned_data['email']
-
-            return HttpResponse(str(email)+str(first_name))
+            description = form.cleaned_data['description']
+            password = form.cleaned_data['password']
+            confirm_password = form.cleaned_data['confirm_password']
+            if confirm_password != password:
+                pass
+            validation_code = send_validation_code(email)
+            token = str(secrets.token_hex())
+            x, y = models.corporate_sign_up(co_user_name, name, email, description, password, token, validation_code)
+            return HttpResponse(y)
     else:
         form = forms.CorporateSignIn(request.POST)
 
