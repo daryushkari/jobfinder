@@ -55,8 +55,8 @@ def applicant_login(request):
             password = form.cleaned_data['password']
             x, token = send_token(username, password)
             if x:
-                token = '/applicant/users/'+token
-                return HttpResponse("Welcome")
+                token = '/mainapp/'+token
+                return HttpResponseRedirect(token)
             elif token == "user not valid":
                 return HttpResponse("user not valid")
             return HttpResponse("username or password is wrong")
@@ -66,6 +66,8 @@ def applicant_login(request):
 
 # corporate sign up
 
+def mainapp(request, user_name):
+    return HttpResponse(str(user_name))
 
 def corporate(request):
     if request.method == "POST":

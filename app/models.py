@@ -186,7 +186,7 @@ def applicant_sign_up(first_name, last_name, user_name, password, email, token, 
 
     new_applicant = {
         'user_name': user_name,
-        'password_hash': str(hashlib.sha512(password.encode('utf-8')).hexdigest()),
+        'password_hash': password,
         'last_name': last_name,
         'first_name': first_name,
         'email': email,
@@ -242,7 +242,7 @@ def corporate_sign_up(co_user_name, name, email, description, password, token, v
 
     new_corporate = {
         'co_user_name': co_user_name,
-        'password_hash': str(hashlib.sha512(password.encode('utf-8')).hexdigest()),
+        'password_hash': password,
         'name': name,
         'email': email,
         'rate': 2.5,
