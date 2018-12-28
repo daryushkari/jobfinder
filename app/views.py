@@ -69,6 +69,7 @@ def applicant_login(request):
 def mainapp(request, user_name):
     return HttpResponse(str(user_name))
 
+
 def corporate(request):
     if request.method == "POST":
         form = forms.CorporateSignIn(request.POST)
@@ -89,3 +90,29 @@ def corporate(request):
         form = forms.CorporateSignIn(request.POST)
 
     return render(request, 'front/corporate_templates/corporate_sign_in.html', {'form': form})
+
+
+def make_anc(request):
+    if request.method == "POST":
+        print("here1")
+        form = forms.CreateAnnouncement(request.POST)
+        if form.is_valid():
+            print("here2")
+            cp_name = form.cleaned_data['corporate_name']
+            cp_link = form.cleaned_data['corporate_link']
+            issue = form.cleaned_data['job_issue']
+            salary = form.cleaned_data['job_salary']
+            description = form.cleaned_data['description']
+            email = form.cleaned_data['corporate_email']
+            models.mak_announcement(cp_name, cp_link, issue, salary, description, email)
+            return HttpResponse("Announcement created")
+    else:
+        print("fuck")
+        form = forms.CreateAnnouncement(request.POST)
+    return render(request, 'make_anc.html', {'form': form})
+
+
+def see_anc(request):
+    x = models.see_ann()
+    return HttpResponse(str(x))
+    #return render(request, 'see_anc.html')

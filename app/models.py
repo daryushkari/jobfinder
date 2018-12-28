@@ -175,6 +175,7 @@ class Rate(models.Model):
 #     'end_time': '',
 #     'sent_resumes': [],
 #     'description': '',
+#     'email': '',
 # }
 
 # add applicant user to database
@@ -255,3 +256,30 @@ def corporate_sign_up(co_user_name, name, email, description, password, token, v
     }
     db.corporate.insert(new_corporate)
     return True, "corporate created successfully"
+
+
+def mak_announcement(cp_name, cp_link, issue, salary, description, email):
+    print("ok")
+    announcement = {
+        'corporate_name': cp_name,
+        'corporate_link': cp_link,
+        'issue': issue,
+        'salary': salary,
+        'sent_resumes': [],
+        'description': description,
+        'email': email,
+    }
+    db.announcement.insert(announcement)
+    return "ok"
+
+
+def see_ann():
+    cursor = db.announcement.find({})
+    x = []
+    for document in cursor:
+        if 'sent_resumes' in document:
+            del document['sent_resumes']
+        if '_id' in document:
+            del document['_id']
+        x.append(document)
+    return x

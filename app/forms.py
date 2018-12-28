@@ -30,10 +30,9 @@ class CorporateLogin(forms.Form):
 
 
 class CreateAnnouncement(forms.Form):
+    corporate_email = forms.CharField(label="corporate mail")
     corporate_name = forms.CharField(label="corporate name", max_length=100)
     corporate_link = forms.CharField(label="your website")
-    job_issue = forms.CharField(label="job issue", max_length=100)
-    job_fields = forms.CharField(label="job fields separate fields by #")
+    job_issue = forms.CharField(label="job issue")
     job_salary = forms.IntegerField(label="job salary")
-    end_time = forms.IntegerField(label="end time")
-    description = forms.TimeField()
+    description = forms.CharField(widget=forms.Textarea)
